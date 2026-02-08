@@ -7,14 +7,14 @@ browser.runtime.onInstalled.addListener(() => {
     if (!result.userId) {
       const newId = "user_" + Math.random().toString(36).substr(2, 9);
       browser.storage.local.set({ userId: newId });
-      console.log("NeuroRead: Generated new Private User ID:", newId);
+      console.log("Dyslexic: Generated new Private User ID:", newId);
     }
   });
 
   // Create Context Menu Item
   browser.contextMenus.create({
     id: "neuro-analyze",
-    title: "NeuroRead: Condense & Analyze Selection",
+    title: "Dyslexic: Condense & Analyze Selection",
     contexts: ["selection"]
   });
 });

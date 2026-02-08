@@ -2,7 +2,7 @@
 AI-Powered Literacy & Dyslexia Assistant
 > **"Democratizing web accessibility through server-side intelligence."**
 
-**Conductor**  is a hybrid browser extension and Python AI backend designed to bridge the gap between standard web content and neurodivergent processing needs. Unlike simple "overlay" extensions that just change fonts, NeuroRead uses **Natural Language Processing (NLP)**, **Stylometric Analysis**, and **Deep Learning** to understand the *context* of text, not just its spelling.
+**Conductor**  is a hybrid browser extension and Python AI backend designed to bridge the gap between standard web content and neurodivergent processing needs. Unlike simple "overlay" extensions that just change fonts, Dyslexic uses **Natural Language Processing (NLP)**, **Stylometric Analysis**, and **Deep Learning** to understand the *context* of text, not just its spelling.
 
 This tool moves beyond simple "overlay" extensions by using server-side natural language processing to understand the *context* of text, not just the ***spelling***. It provides real-time content adaptation, authorship analysis, and multi-modal reading assistance (Text-to-Speech, Dictation, and Visual Overrides).
 
@@ -39,7 +39,7 @@ This tool moves beyond simple "overlay" extensions by using server-side natural 
 
 ## 🏗️ System Architecture
 
-NeuroRead utilizes a **Hybrid Client-Server Architecture** to overcome browser resource limitations.
+Dyslexic utilizes a **Hybrid Client-Server Architecture** to overcome browser resource limitations.
 
 ### **The Frontend (Firefox Extension)**
 * **Stack:** JavaScript (ES6), HTML5, CSS3, WebExtension API.
@@ -83,8 +83,8 @@ Conductor/
 ### Prerequisite: Python Backend
 1.  **Clone the Repo:**
     \`\`\`bash
-    git clone https://github.com/AidanColvin/neuro-read.git
-    cd neuro-read
+    git clone https://github.com/AidanColvin/dyslexic.git
+    cd dyslexic
     \`\`\`
 
 2.  **Install Dependencies:**
@@ -107,20 +107,20 @@ Conductor/
 1.  Open Firefox and navigate to \`about:debugging\`.
 2.  Click **"This Firefox"** > **"Load Temporary Add-on"**.
 3.  Navigate to the \`extension/\` folder and select \`manifest.json\`.
-4.  The NeuroRead icon will appear in your toolbar.
+4.  The Dyslexic icon will appear in your toolbar.
 
 ---
 
 ## Usage Guide
 
 **1. Reading Mode**
-* Click the NeuroRead Icon.
+* Click the Dyslexic Icon.
 * Toggle "Reader Mode" to strip distractions.
 * Select "OpenDyslexic" font and adjust size.
 
 **2. Analyzing Text Complexity**
 * Highlight a paragraph.
-* Right-click and select **"Analyze Selection with NeuroRead"**.
+* Right-click and select **"Analyze Selection with Dyslexic"**.
 * View the "Stylometric Signature" (Reading Level & Complexity Score).
 
 **3. Dictionary & Pronunciation**

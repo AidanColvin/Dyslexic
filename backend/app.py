@@ -12,7 +12,7 @@ import structure_analyzer
 
 # Setup Logging
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("NeuroRead-Secure")
+logger = logging.getLogger("Dyslexic-Secure")
 
 app = Flask(__name__)
 

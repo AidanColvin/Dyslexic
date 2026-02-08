@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "NeuroRead: Dyslexia Assistant",
+  "name": "Dyslexic: Dyslexia Assistant",
   "version": "1.0",
   "description": "AI-powered reading assistant. Connects to Python backend for NLP.",
   "permissions": [

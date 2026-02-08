@@ -1,1 +1,1 @@
-import sys; sys.path.append('backend'); from backend.app import app; print('Starting NeuroRead...'); app.run(host='0.0.0.0', port=5000)
+import sys; sys.path.append('backend'); from backend.app import app; print('Starting Dyslexic...'); app.run(host='0.0.0.0', port=5000)

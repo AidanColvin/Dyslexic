@@ -70,7 +70,7 @@ function showTooltip(data, original) {
   // (Reuse the tooltip UI code from previous responses, 
   // but ensure it handles the 'suggestions' array from the backend)
   console.log("Suggestions:", data.suggestions);
-  alert(`NeuroRead Suggestions for '${original}':\n` + 
+  alert(`Dyslexic Suggestions for '${original}':\n` + 
     data.suggestions.map(s => `• ${s.word} (${s.confidence})`).join("\n")
   );
 }
@@ -128,7 +128,7 @@ async function secureFetch(endpoint, body) {
   });
 
   if (response.status === 401) {
-    console.error("NeuroRead: Authentication Failed. Check Extension Settings.");
+    console.error("Dyslexic: Authentication Failed. Check Extension Settings.");
     return null;
   }
   return response.json();

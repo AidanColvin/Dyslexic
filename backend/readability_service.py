@@ -46,7 +46,7 @@ def fetch_and_clean_url(url: str, user_prefs: Optional[Dict] = None) -> Dict[str
     try:
         # 1. Fetch Raw HTML
         # In production, use a proper User-Agent to avoid blocking
-        response = requests.get(url, timeout=10, headers={"User-Agent": "NeuroRead/1.0"})
+        response = requests.get(url, timeout=10, headers={"User-Agent": "Dyslexic/1.0"})
         if response.status_code != 200:
             return {"error": "Failed to retrieve page"}
 
@@ -84,7 +84,7 @@ def fetch_and_clean_url(url: str, user_prefs: Optional[Dict] = None) -> Dict[str
         <html lang="en">
         <head>
             <meta charset="UTF-8">
-            <title>{title} - NeuroRead View</title>
+            <title>{title} - Dyslexic View</title>
             {DEFAULT_CSS}
         </head>
         <body>
