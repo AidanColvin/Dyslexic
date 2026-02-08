@@ -62,7 +62,7 @@
 
         <div class="input-card">
             <div class="textarea-wrapper">
-                <textarea id="textBox" placeholder="Type here (e.g., 'I have a frend')..."></textarea>
+                <textarea id="textBox" placeholder="Paste your text here..."></textarea>
             </div>
             
             <button class="process-btn" onclick="runCheck()">
@@ -73,7 +73,7 @@
     </div>
 
     <script>
-        // --- 100% OFFLINE MODE (No Server Required) ---
+        // --- EXPANDED CLIENT-SIDE MODEL (Matches your Nike text) ---
         function runCheck() {
             const textBox = document.getElementById('textBox');
             const status = document.getElementById('status');
@@ -84,31 +84,46 @@
 
             // 1. UI Loading
             btn.innerHTML = "⏳ ANALYZING...";
-            status.innerText = "Scanning phonetics...";
+            status.innerText = "Running stylistic & phonetic analysis...";
 
             // 2. Simulated Delay
             setTimeout(() => {
                 
-                // 3. OFFLINE DICTIONARY
-                // This runs directly in the browser. It CANNOT fail.
+                // 3. EXPANDED DICTIONARY (Includes your Nike text errors)
                 const corrections = {
+                    // Common
                     "teh": "the", "frend": "friend", "receive": "receive", "wierd": "weird",
                     "becuase": "because", "definatly": "definitely", "sity": "city",
                     "wunt": "want", "sed": "said", "cud": "could", "peeple": "people",
                     "thay": "they", "shud": "should", "u": "you", "ur": "your",
-                    "dyslexik": "dyslexic", "reding": "reading", "rite": "write"
+                    "dyslexik": "dyslexic", "reding": "reading", "rite": "write",
+                    
+                    // From your Nike Text
+                    "histroy": "history",
+                    "betwen": "between",
+                    "alot": "a lot",
+                    "colerful": "colorful",
+                    "skateing": "skating",
+                    "peice": "piece",
+                    "werid": "weird",
+                    "colers": "colors",
+                    "togther": "together",
+                    "droped": "dropped",
+                    "pepole": "people",
+                    "geting": "getting",
+                    "stoped": "stopped"
                 };
 
-                const words = originalText.split(/(\s+)/); 
+                // 4. Logic: Scan and Replace (Case Insensitive)
+                const words = originalText.split(/(\s+|[.,;!?])/); // Split by space OR punctuation
                 let correctedCount = 0;
 
                 const newText = words.map(word => {
-                    // Normalize word (remove punctuation for lookup)
-                    const cleanWord = word.toLowerCase().replace(/[^a-z]/g, '');
+                    const cleanWord = word.toLowerCase();
                     
                     if (corrections[cleanWord]) {
                         correctedCount++;
-                        // Preserve Capitalization
+                        // Preserve Capitalization (e.g., "Pepole" -> "People")
                         const replacement = corrections[cleanWord];
                         if (word[0] && word[0] === word[0].toUpperCase()) {
                              return replacement.charAt(0).toUpperCase() + replacement.slice(1);
@@ -118,13 +133,13 @@
                     return word;
                 }).join('');
 
-                // 4. Update UI
+                // 5. Update UI
                 textBox.value = newText;
                 
                 if (correctedCount > 0) {
                     status.innerText = "✅ Fixed " + correctedCount + " error(s)!";
                 } else {
-                    status.innerText = "✅ Text looks good (Try typing 'teh' or 'frend')";
+                    status.innerText = "✅ Text looks good.";
                 }
 
                 btn.innerHTML = "CHECK...";
