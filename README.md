@@ -1,8 +1,8 @@
-# Conductor 🧠  
+# Dyslexic 🧠  
 AI-Powered Literacy & Dyslexia Assistant
 > **"Democratizing web accessibility through server-side intelligence."**
 
-**Conductor**  is a hybrid browser extension and Python AI backend designed to bridge the gap between standard web content and neurodivergent processing needs. Unlike simple "overlay" extensions that just change fonts, Dyslexic uses **Natural Language Processing (NLP)**, **Stylometric Analysis**, and **Deep Learning** to understand the *context* of text, not just its spelling.
+**Dyslexic**  is a hybrid browser extension and Python AI backend designed to bridge the gap between standard web content and neurodivergent processing needs. Unlike simple "overlay" extensions that just change fonts, Dyslexic uses **Natural Language Processing (NLP)**, **Stylometric Analysis**, and **Deep Learning** to understand the *context* of text, not just its spelling.
 
 This tool moves beyond simple "overlay" extensions by using server-side natural language processing to understand the *context* of text, not just the ***spelling***. It provides real-time content adaptation, authorship analysis, and multi-modal reading assistance (Text-to-Speech, Dictation, and Visual Overrides).
 
