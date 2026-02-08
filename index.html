@@ -22,21 +22,63 @@
 
         .container { width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 20px; }
 
+        /* HEADER CARD - FLEXBOX LAYOUT */
         .header-card {
             border: 5px solid var(--black);
             background: var(--white);
             padding: 40px;
             box-shadow: 10px 10px 0px var(--black);
+            display: flex;
+            justify-content: space-between; /* Pushes text left, logo right */
+            align-items: stretch; /* Makes sure both sides are same height */
+            gap: 20px;
+            overflow: hidden;
         }
-        h1 { font-size: 5rem; margin: 0; line-height: 0.8; letter-spacing: -3px; text-transform: uppercase; }
-        .subtitle { font-size: 1.5rem; font-weight: 900; margin-top: 15px; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Distributes space evenly */
+        }
+
+        h1 { 
+            font-size: 5rem; 
+            margin: 0; 
+            line-height: 0.8; 
+            letter-spacing: -3px; 
+            text-transform: uppercase; 
+        }
+
+        .subtitle { 
+            font-size: 1.5rem; 
+            font-weight: 900; 
+            margin-top: 15px; 
+            margin-bottom: 30px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
         
         .btn-group { display: flex; gap: 20px; }
         .btn { text-decoration: none; font-size: 1.2rem; font-weight: bold; padding: 15px 30px; border: 4px solid var(--black); text-transform: uppercase; transition: all 0.1s; cursor: pointer; }
         .btn-black { background: var(--black); color: var(--white); }
         .btn-white { background: var(--white); color: var(--black); }
         .btn:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0px rgba(0,0,0,0.2); }
+
+        /* LOGO STYLING */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-img {
+            height: 100%;       /* Spans the full height of the text block */
+            max-height: 250px;  /* Safety limit so it doesn't explode */
+            width: auto;
+            object-fit: contain;
+        }
         
+        /* INPUT AREA */
         .input-card { border: 5px solid var(--black); background: var(--white); padding: 20px; box-shadow: 10px 10px 0px var(--black); }
         .textarea-wrapper { border: 3px solid var(--black); padding: 5px; background: var(--white); }
         textarea { width: 100%; height: 300px; border: none; background: #faf9f0; padding: 20px; font-family: 'Courier New', Courier, monospace; font-size: 1.2rem; resize: none; outline: none; color: #333; }
@@ -44,19 +86,33 @@
         
         .process-btn { width: 100%; margin-top: 20px; background: var(--black); color: var(--white); border: none; padding: 25px; font-size: 2rem; font-family: 'Courier New', Courier, monospace; font-weight: 900; text-transform: uppercase; cursor: pointer; border: 4px solid var(--black); transition: all 0.1s; }
         .process-btn:hover { background: #222; }
-        
         .status-msg { margin-top: 10px; font-weight: bold; text-align: center; min-height: 20px; color: var(--black); }
+
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 768px) {
+            .header-card { flex-direction: column-reverse; text-align: center; align-items: center; }
+            .logo-img { max-height: 150px; margin-bottom: 20px; }
+            .btn-group { justify-content: center; }
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <div class="header-card">
-            <h1>Dyslexic</h1>
-            <div class="subtitle">AI-Powered Literacy Tool</div>
-            <div class="btn-group">
-                <a href="https://github.com/AidanColvin/Dyslexic" class="btn btn-black" target="_blank">GITHUB</a>
-                <a href="https://github.com/AidanColvin/Dyslexic/raw/main/dyslexic_firefox_v1.zip" class="btn btn-white">FIREFOX</a>
+            <div class="header-left">
+                <div>
+                    <h1>Dyslexic</h1>
+                    <div class="subtitle">AI-Powered Literacy Tool</div>
+                </div>
+                <div class="btn-group">
+                    <a href="https://github.com/AidanColvin/Dyslexic" class="btn btn-black" target="_blank">GITHUB</a>
+                    <a href="https://github.com/AidanColvin/Dyslexic/raw/main/dyslexic_firefox_v1.zip" class="btn btn-white">FIREFOX</a>
+                </div>
+            </div>
+            
+            <div class="logo-container">
+                <img src="assets/logo.png" alt="Dyslexic Logo" class="logo-img" onerror="this.style.display='none'">
             </div>
         </div>
 
@@ -65,7 +121,7 @@
                 <textarea id="textBox" placeholder="Paste your text here..."></textarea>
             </div>
             
-            <button class="process-btn" onclick="runCheck()">
+            <button class="process-btn" onclick="connectToBrain()">
                 CHECK...
             </button>
             <div id="status" class="status-msg"></div>
@@ -73,8 +129,7 @@
     </div>
 
     <script>
-        // --- EXPANDED CLIENT-SIDE MODEL (Matches your Nike text) ---
-        function runCheck() {
+        async function connectToBrain() {
             const textBox = document.getElementById('textBox');
             const status = document.getElementById('status');
             const btn = document.querySelector('.process-btn');
@@ -82,69 +137,32 @@
 
             if (!originalText.trim()) return;
 
-            // 1. UI Loading
-            btn.innerHTML = "⏳ ANALYZING...";
-            status.innerText = "Running stylistic & phonetic analysis...";
+            btn.innerHTML = "⏳ CONNECTING...";
+            status.innerText = "Sending data to Python Backend...";
+            textBox.style.opacity = "0.5";
 
-            // 2. Simulated Delay
-            setTimeout(() => {
+            const API_URL = "https://dyslexic-backend.onrender.com";
+
+            try {
+                const response = await fetch(API_URL + '/dyslexia/v2/suggest', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sentence: originalText })
+                });
+
+                if (!response.ok) throw new Error("Server Error");
+
+                const data = await response.json();
+                textBox.value = data.correction;
+                textBox.style.opacity = "1";
+                status.innerText = "✅ Processed by Python Backend!";
                 
-                // 3. EXPANDED DICTIONARY (Includes your Nike text errors)
-                const corrections = {
-                    // Common
-                    "teh": "the", "frend": "friend", "receive": "receive", "wierd": "weird",
-                    "becuase": "because", "definatly": "definitely", "sity": "city",
-                    "wunt": "want", "sed": "said", "cud": "could", "peeple": "people",
-                    "thay": "they", "shud": "should", "u": "you", "ur": "your",
-                    "dyslexik": "dyslexic", "reding": "reading", "rite": "write",
-                    
-                    // From your Nike Text
-                    "histroy": "history",
-                    "betwen": "between",
-                    "alot": "a lot",
-                    "colerful": "colorful",
-                    "skateing": "skating",
-                    "peice": "piece",
-                    "werid": "weird",
-                    "colers": "colors",
-                    "togther": "together",
-                    "droped": "dropped",
-                    "pepole": "people",
-                    "geting": "getting",
-                    "stoped": "stopped"
-                };
-
-                // 4. Logic: Scan and Replace (Case Insensitive)
-                const words = originalText.split(/(\s+|[.,;!?])/); // Split by space OR punctuation
-                let correctedCount = 0;
-
-                const newText = words.map(word => {
-                    const cleanWord = word.toLowerCase();
-                    
-                    if (corrections[cleanWord]) {
-                        correctedCount++;
-                        // Preserve Capitalization (e.g., "Pepole" -> "People")
-                        const replacement = corrections[cleanWord];
-                        if (word[0] && word[0] === word[0].toUpperCase()) {
-                             return replacement.charAt(0).toUpperCase() + replacement.slice(1);
-                        }
-                        return replacement;
-                    }
-                    return word;
-                }).join('');
-
-                // 5. Update UI
-                textBox.value = newText;
-                
-                if (correctedCount > 0) {
-                    status.innerText = "✅ Fixed " + correctedCount + " error(s)!";
-                } else {
-                    status.innerText = "✅ Text looks good.";
-                }
-
-                btn.innerHTML = "CHECK...";
-
-            }, 800); 
+            } catch (error) {
+                console.error(error);
+                textBox.style.opacity = "1";
+                status.innerHTML = "❌ Connection Failed. Check Render Server.";
+            }
+            btn.innerHTML = "CHECK...";
         }
     </script>
 </body>
