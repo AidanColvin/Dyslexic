@@ -1,23 +1,22 @@
-import pytest
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../backend')))
-from dyslexic_logic import calculate_visual_distance, generate_candidates, get_phonetic_code
+import unittest
+from backend.dyslexic_logic import DyslexicAssistant
 
-def test_phonetic_hashing():
-    # "frend" and "friend" should sound the same
-    assert get_phonetic_code("frend") == get_phonetic_code("friend")
-    # "sity" and "city" should sound the same
-    assert get_phonetic_code("sity") == get_phonetic_code("city")
+class TestDyslexicLogic(unittest.TestCase):
+    def setUp(self):
+        self.assistant = DyslexicAssistant()
 
-def test_visual_distance_bias():
-    # 'b' vs 'd' should be closer than 'b' vs 'z' due to dyslexic weighting
-    dist_bd = calculate_visual_distance("bad", "dad")
-    dist_bz = calculate_visual_distance("bad", "zaz")
-    assert dist_bd < dist_bz, "Visual confusion (b/d) should cost less than random typo"
+    def test_corrections(self):
+        # Testing spelling 'because'
+        self.assertEqual(self.assistant.correct_text("becuase"), "because")
+        
+        # Testing abbreviations/grammar
+        self.assertEqual(self.assistant.correct_text("dont"), "don't")
+        self.assertEqual(self.assistant.correct_text("didnt"), "didn't")
+        
+        # Testing full sentence
+        text = "My frend dont like it becuase it didnt work."
+        expected = "My friend don't like it because it didn't work."
+        self.assertEqual(self.assistant.correct_text(text), expected)
 
-def test_candidate_generation():
-    dictionary = ["friend", "apple", "banana"]
-    candidates = generate_candidates("frend", dictionary)
-    assert "friend" in candidates
-    assert "banana" not in candidates
+if __name__ == "__main__":
+    unittest.main()
