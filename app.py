@@ -1,187 +1,128 @@
-from flask import Flask, request, jsonify, send_file
+import os
+import logging
+from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 from pathlib import Path
-import logging
-import os
 
-# --- IMPORT YOUR MODULES ---
-import logic              # Stylometry
-import speech_service     # TTS / STT
-import text_service       # Summarization / Basic NLP
-import ai_grammar         # T5 Grammar Correction
-import dyslexic_logic     # Phonetic Hashing / Edit Distance
-import context_engine     # BERT Context Ranking
-import pdf_service        # PDF Text Extraction
-import dictionary_service # Definitions
-import notes_service      # User Annotations
+# Import your robust modules (ensure these files exist from previous steps)
+import suggestion_pipeline
+import user_profile
+import readability_service
+import pdf_reflow_service
+import structure_analyzer
 
-# --- CONFIGURATION ---
-app = Flask(__name__)
-CORS(app) # Allow Firefox Extension to connect
-
-# Logging setup
+# Setup Logging
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("NeuroRead")
+logger = logging.getLogger("NeuroRead-Backend")
 
-# --- SYSTEM ENDPOINTS ---
+app = Flask(__name__)
 
-@app.route("/status", methods=["GET"])
-def health_check():
-    """
-    verifies system status and module availability
-    """
-    return jsonify({
-        "status": "online",
-        "modules": {
-            "ai_grammar": ai_grammar._grammar_model is not None,
-            "context_engine": context_engine._fill_mask is not None
-        }
-    })
+# CRITICAL: Allow CORS for all domains so the Extension (which runs on any URL) can talk to this.
+# In production, you might restrict this, but for Codespaces + Extension, we need wildcard access.
+CORS(app, resources={r"/*": {"origins": "*"}})
 
-# --- DYSLEXIA & GRAMMAR ENDPOINTS ---
+@app.before_request
+def handle_preflight():
+    """
+    Handle CORS preflight requests for browser extensions.
+    """
+    if request.method == "OPTIONS":
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, X-User-ID")
+        response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        return response
 
-@app.route("/dyslexia/suggest", methods=["POST"])
-def suggest_correction():
+def get_user_id():
     """
-    advanced spellcheck using dyslexic heuristics + bert context
-    expects json: { "sentence": "...", "misspelled_word": "..." }
+    Helper to extract the unique User ID sent by the extension.
+    This ensures 'Private' learning profiles for each user.
     """
+    # Default to 'public_guest' if the extension doesn't send an ID
+    return request.headers.get("X-User-ID", "public_guest")
+
+# --- 1. DYSLEXIA & LEARNING ENDPOINTS ---
+
+@app.route("/dyslexia/v2/suggest", methods=["POST"])
+def suggest_robust():
+    """
+    Main spellcheck endpoint. 
+    Personalizes results based on the X-User-ID header.
+    """
+    user_id = get_user_id()
     data = request.get_json()
     sentence = data.get("sentence", "")
     misspelled = data.get("misspelled_word", "").lower()
     
-    if not sentence or not misspelled:
-        return jsonify({"error": "Missing inputs"}), 400
+    # Load dictionary (In production, load this once globally)
+    from nltk.corpus import words as nltk_words
+    english_vocab = [w.lower() for w in nltk_words.words() if len(w) > 2]
 
-    # 1. Generate Candidates (Phonetic + Weighted Distance)
-    # Note: In production, load a real dict. Using a small set for demo safety.
-    # You should load a full word list in global scope.
-    candidates = dyslexic_logic.generate_candidates(misspelled, ["friend", "said", "city", "from"]) 
-    
-    # 2. Contextual Ranking (BERT)
-    ranked = context_engine.rank_candidates_by_context(sentence, misspelled, candidates)
-    
-    return jsonify({"suggestions": ranked})
-
-@app.route("/nlp/smart-correct", methods=["POST"])
-def smart_correct():
-    """
-    full sentence grammar correction using T5 transformer
-    expects json: { "text": "..." }
-    """
-    data = request.get_json()
-    text = data.get("text", "")
-    
-    try:
-        result = ai_grammar.fix_contextual_grammar(text)
-        return jsonify(result)
-    except Exception as e:
-        logger.error(f"Grammar Error: {e}")
-        return jsonify({"error": "Processing failed"}), 500
-
-# --- READING ASSISTANCE ENDPOINTS ---
-
-@app.route("/read/define", methods=["POST"])
-def define_word():
-    """
-    fetches definition and audio url for a word
-    expects json: { "word": "..." }
-    """
-    data = request.get_json()
-    word = data.get("word", "")
-    
-    details = dictionary_service.fetch_word_details(word)
-    if not details:
-        return jsonify({"found": False}), 404
-        
-    return jsonify({"found": True, "data": details})
-
-@app.route("/read/analyze-style", methods=["POST"])
-def analyze_style():
-    """
-    calculates stylometric signature (complexity, authorship)
-    expects json: { "text": "..." }
-    """
-    data = request.get_json()
-    text = data.get("text", "")
-    signature = logic.make_signature(text)
-    return jsonify({"signature": signature})
-
-@app.route("/read/pdf-text", methods=["POST"])
-def parse_pdf():
-    """
-    extracts text from an uploaded pdf file
-    expects multipart/form-data: { "file": <pdf_blob> }
-    """
-    if 'file' not in request.files:
-        return jsonify({"error": "No file uploaded"}), 400
-        
-    file = request.files['file']
-    text = pdf_service.extract_text_from_pdf_bytes(file.read())
-    
-    return jsonify({"text_length": len(text), "content": text})
-
-# --- VOICE & NOTES ENDPOINTS ---
-
-@app.route("/voice/speak", methods=["POST"])
-def speak():
-    """
-    text-to-speech generation
-    returns mp3 audio file
-    """
-    data = request.get_json()
-    text = data.get("text", "")
-    file_path = speech_service.text_to_audio_file(text)
-    return send_file(file_path, mimetype="audio/mpeg")
-
-@app.route("/voice/dictate", methods=["POST"])
-def dictate():
-    """
-    speech-to-text transcription
-    expects audio file upload
-    """
-    if 'audio' not in request.files:
-        return jsonify({"error": "No audio"}), 400
-    
-    # Save temp and process
-    audio_file = request.files['audio']
-    temp_path = Path("temp") / audio_file.filename
-    audio_file.save(temp_path)
-    
-    text = speech_service.audio_file_to_text(str(temp_path))
-    speech_service.cleanup_temp_file(str(temp_path))
-    
-    return jsonify({"transcription": text})
-
-@app.route("/notes/add", methods=["POST"])
-def add_note():
-    """
-    saves a user annotation
-    expects json: { "url": "...", "text": "...", "comment": "..." }
-    """
-    data = request.get_json()
-    note = notes_service.add_note(
-        data.get("url"), 
-        data.get("selected_text"), 
-        data.get("comment")
+    # Pass user_id to pipeline to load specific profile
+    result = suggestion_pipeline.get_robust_suggestions(
+        sentence, 
+        misspelled, 
+        english_vocab,
+        user_id=user_id 
     )
-    return jsonify(note)
+    
+    return jsonify(result)
 
-@app.route("/notes/get", methods=["GET"])
-def get_notes():
+@app.route("/dyslexia/feedback", methods=["POST"])
+def feedback():
     """
-    retrieves notes for a specific url
-    expects query param: ?url=...
+    Learning Endpoint.
+    Records when a user accepts/ignores a suggestion to update their private profile.
     """
-    url = request.args.get("url")
-    notes = notes_service.get_notes_for_url(url)
-    return jsonify({"notes": notes})
+    user_id = get_user_id()
+    data = request.get_json()
+    
+    suggestion_pipeline.handle_user_feedback(
+        data.get("misspelling"),
+        data.get("chosen"),
+        data.get("action"),
+        user_id=user_id
+    )
+    
+    return jsonify({"status": "learned", "user": user_id})
+
+# --- 2. READER MODE & PDF ENDPOINTS ---
+
+@app.route("/view/reader-mode", methods=["POST"])
+def reader_mode():
+    """
+    Takes a URL and returns a cleaned, dyslexia-friendly HTML version.
+    Using POST to avoid URL encoding issues in query params.
+    """
+    data = request.get_json()
+    url = data.get("url")
+    
+    if not url: 
+        return jsonify({"error": "No URL provided"}), 400
+        
+    result = readability_service.fetch_and_clean_url(url)
+    return jsonify(result) # Returns { html: "...", title: "..." }
+
+@app.route("/view/condense", methods=["POST"])
+def condense():
+    """
+    Analyzes text to extract structure (Headings, Bullets).
+    """
+    data = request.get_json()
+    text = data.get("text", "")
+    structure = structure_analyzer.extract_key_structure(text)
+    return jsonify(structure)
+
+# --- 3. SYSTEM STATUS ---
+
+@app.route("/status", methods=["GET"])
+def status():
+    return jsonify({
+        "status": "online", 
+        "backend": "NeuroRead v2.0",
+        "mode": "Codespace Public"
+    })
 
 if __name__ == "__main__":
-    # Pre-load heavy models to avoid lag on first request
-    print("Initializing AI Models...")
-    ai_grammar.load_model()
-    context_engine.load_context_model()
-    
-    # Run server
+    # In Codespaces, we must run on 0.0.0.0 to expose the port
     app.run(host="0.0.0.0", port=5000, debug=True)
