@@ -53,6 +53,7 @@ Dyslexic utilizes a **Hybrid Client-Server Architecture** to overcome browser re
 
 ## 📂 Project Structure
 
+```text
 Conductor/
 ├── backend/                  # The Intelligence Layer
 │   ├── app.py                # Flask API Gateway & Entry Point
