@@ -51,34 +51,6 @@ Dyslexic utilizes a **Hybrid Client-Server Architecture** to overcome browser re
 
 ---
 
-## 📂 Project Structure
-
-```text
-Conductor/
-├── backend/                  # The Intelligence Layer
-│   ├── app.py                # Flask API Gateway & Entry Point
-│   ├── dyslexic_logic.py     # Phonetic Hashing & Visual Distance Algorithms
-│   ├── context_engine.py     # BERT Transformer Model for Contextualization
-│   ├── structure_analyzer.py # Stylometry, Complexity Scoring & HTML Parsing
-│   └── user_profile.py       # Active Learning (User Corrections & Lexicon)
-├── extension/                # The Browser Interface
-│   ├── manifest.json         # Extension Configuration
-│   ├── content.js            # DOM Injection (Reader Mode/Fonts)
-│   ├── background.js         # API Communication
-│   ├── popup.html            # User Interface (Menu)
-│   └── assets/               # Icons & Fonts
-├── config/                   # Environment Configurations
-│   ├── public_mode.env       # Open Access Settings
-│   └── private_mode.env      # Secured/API Key Settings
-├── tests/                    # Diagnostic Suite
-│   ├── test_dyslexic_logic.py
-│   ├── test_api_integration.py
-│   └── ...
-├── run.py                    # Root Launcher
-├── Procfile                  # Cloud Deployment Config (Render/Heroku)
-└── requirements.txt          # Python Dependencies
-```
----
 
 ## 🛠️ Installation & Setup
 
@@ -144,3 +116,34 @@ Contributions are welcome! Please read \`CONTRIBUTING.md\` for details on our co
 **Author:** Aidan Colvin
 **License:** MIT
 EOF
+
+---
+
+## 📂 Project Structure
+
+```text
+Conductor/
+├── backend/                  # The Intelligence Layer
+│   ├── app.py                # Flask API Gateway & Entry Point
+│   ├── dyslexic_logic.py     # Phonetic Hashing & Visual Distance Algorithms
+│   ├── context_engine.py     # BERT Transformer Model for Contextualization
+│   ├── structure_analyzer.py # Stylometry, Complexity Scoring & HTML Parsing
+│   └── user_profile.py       # Active Learning (User Corrections & Lexicon)
+├── extension/                # The Browser Interface
+│   ├── manifest.json         # Extension Configuration
+│   ├── content.js            # DOM Injection (Reader Mode/Fonts)
+│   ├── background.js         # API Communication
+│   ├── popup.html            # User Interface (Menu)
+│   └── assets/               # Icons & Fonts
+├── config/                   # Environment Configurations
+│   ├── public_mode.env       # Open Access Settings
+│   └── private_mode.env      # Secured/API Key Settings
+├── tests/                    # Diagnostic Suite
+│   ├── test_dyslexic_logic.py
+│   ├── test_api_integration.py
+│   └── ...
+├── run.py                    # Root Launcher
+├── Procfile                  # Cloud Deployment Config (Render/Heroku)
+└── requirements.txt          # Python Dependencies
+```
+---
