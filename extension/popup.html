@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { width: 320px; font-family: 'Arial', sans-serif; padding: 15px; background: #fdfbf7; }
+    h3 { margin-top: 0; color: #333; }
+    label { font-size: 12px; font-weight: bold; display: block; margin-top: 10px; }
+    input[type="text"] { width: 95%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
+    button { width: 100%; padding: 10px; background: #005a9c; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 15px; }
+    button:hover { background: #0044cc; }
+    .status { font-size: 11px; color: #666; margin-top: 5px; }
+    hr { border: 0; border-top: 1px solid #eee; margin: 15px 0; }
+    
+    /* Toggles */
+    .feature-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .switch { font-size: 13px; color: #444; }
+  </style>
+</head>
+<body>
+  <h3>NeuroRead Settings</h3>
+
+  <label>Backend URL (GitHub Codespace):</label>
+  <input type="text" id="backendUrl" placeholder="https://....github.dev">
+  <div id="connectionStatus" class="status">Not Connected</div>
+  <button id="saveBtn">Save & Connect</button>
+
+  <hr>
+
+  <div class="feature-row">
+    <span class="switch">Reader Mode (Clean View)</span>
+    <button id="readerModeBtn" style="width: auto; padding: 5px 10px; font-size: 12px;">Activate</button>
+  </div>
+  
+  <div class="feature-row">
+    <span class="switch">Dyslexia Font (Arial)</span>
+    <input type="checkbox" id="fontToggle">
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
