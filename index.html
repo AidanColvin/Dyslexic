@@ -68,16 +68,16 @@
                 <textarea id="textBox" placeholder="Type here (e.g., 'I have a frend')..."></textarea>
             </div>
             
-            <button class="process-btn" onclick="runBrowserAI()">
-                ▶ PROCESS
+            <button class="process-btn" onclick="runDyslexicCheck()">
+                CHECK...
             </button>
             <div id="status" class="status-msg"></div>
         </div>
     </div>
 
     <script>
-        // --- BROWSER-BASED AI ENGINE (No Server Required) ---
-        function runBrowserAI() {
+        // --- INSTANT BROWSER-BASED CORRECTION (No Server Needed for Demo) ---
+        function runDyslexicCheck() {
             const textBox = document.getElementById('textBox');
             const status = document.getElementById('status');
             const btn = document.querySelector('.process-btn');
@@ -86,58 +86,55 @@
             if (!originalText.trim()) return;
 
             // 1. UI Loading State
-            btn.innerHTML = "⏳ ANALYZING...";
-            status.innerText = "Scanning for phonetic patterns...";
+            btn.innerHTML = "⏳ CHECKING...";
+            status.innerText = "Analyzing phonetics & structure...";
 
-            // 2. Simulate Processing Delay (Feels like AI)
+            // 2. Simulate AI Processing Delay (0.8s)
             setTimeout(() => {
                 
-                // 3. Mini-Dictionary of Common Dyslexic Errors
-                // This replaces the need for the Python backend for the public demo
+                // 3. Corrections Dictionary (Simulating the Backend)
                 const corrections = {
-                    "teh": "the",
-                    "frend": "friend",
-                    "receive": "receive",
-                    "wierd": "weird",
-                    "becuase": "because",
-                    "definatly": "definitely",
-                    "sity": "city",
-                    "wunt": "want",
-                    "sed": "said",
-                    "cud": "could",
-                    "peeple": "people",
-                    "thay": "they"
+                    "teh": "the", "frend": "friend", "receive": "receive", "wierd": "weird",
+                    "becuase": "because", "definatly": "definitely", "sity": "city",
+                    "wunt": "want", "sed": "said", "cud": "could", "peeple": "people",
+                    "thay": "they", "shud": "should", "u": "you", "ur": "your",
+                    "dyslexik": "dyslexic", "reding": "reading"
                 };
 
-                // 4. Apply Logic
-                const words = originalText.split(/(\s+)/); // Split keeping whitespace
+                // 4. Logic: Scan and Replace
                 let correctedCount = 0;
+                // Split by spaces but keep punctuation attached to words for now (simple regex)
+                const words = originalText.split(/(\s+)/); 
 
                 const newText = words.map(word => {
+                    // Clean word to match dictionary keys (lowercase, no punctuation)
                     const cleanWord = word.toLowerCase().replace(/[^a-z]/g, '');
+                    
                     if (corrections[cleanWord]) {
                         correctedCount++;
-                        // Maintain original case if capitalized
+                        // Preserve Capitalization (e.g., "Teh" -> "The")
+                        const replacement = corrections[cleanWord];
                         if (word[0] === word[0].toUpperCase()) {
-                             return corrections[cleanWord].charAt(0).toUpperCase() + corrections[cleanWord].slice(1);
+                             return replacement.charAt(0).toUpperCase() + replacement.slice(1);
                         }
-                        return corrections[cleanWord];
+                        return replacement;
                     }
                     return word;
                 }).join('');
 
-                // 5. Update UI
+                // 5. Output Result
                 textBox.value = newText;
                 
                 if (correctedCount > 0) {
-                    status.innerText = "✅ Fixed " + correctedCount + " dyslexic pattern(s)!";
+                    status.innerText = "✅ Fixed " + correctedCount + " error(s)!";
                 } else {
-                    status.innerText = "✅ No errors found. (Try typing 'teh' or 'frend')";
+                    status.innerText = "✅ Text looks good (or try typing 'teh' or 'frend')";
                 }
 
-                btn.innerHTML = "▶ PROCESS";
+                // Reset Button Label
+                btn.innerHTML = "CHECK...";
 
-            }, 800); // 800ms delay for effect
+            }, 800); 
         }
     </script>
 </body>
