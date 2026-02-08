@@ -88,3 +88,79 @@ function showCondensePanel(text) {
     alert("Key Points:\n" + data.summary_bullets.join("\n"));
   });
 }
+
+/* content.js */
+
+let CONFIG = {
+  url: "",
+  user: "",
+  pass: ""
+};
+
+// 1. Initialize & Listen for Changes
+function loadConfig() {
+  browser.storage.local.get(["backendUrl", "auth_user", "auth_pass", "fontEnabled"]).then((res) => {
+    CONFIG.url = res.backendUrl;
+    CONFIG.user = res.auth_user;
+    CONFIG.pass = res.auth_pass;
+    
+    if(res.fontEnabled) applyDyslexiaFont();
+  });
+}
+loadConfig();
+
+// Listen for updates from popup
+browser.storage.onChanged.addListener(loadConfig);
+
+// 2. Helper to make Authenticated Requests
+async function secureFetch(endpoint, body) {
+  if (!CONFIG.url || !CONFIG.user) return null;
+
+  const authString = btoa(`${CONFIG.user}:${CONFIG.pass}`);
+  
+  const response = await fetch(`${CONFIG.url}${endpoint}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Basic ${authString}`
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (response.status === 401) {
+    console.error("NeuroRead: Authentication Failed. Check Extension Settings.");
+    return null;
+  }
+  return response.json();
+}
+
+// 3. Double-Click Handler
+document.addEventListener("dblclick", async () => {
+  const selection = window.getSelection().toString().trim();
+  if (selection.length < 2) return;
+
+  const context = window.getSelection().anchorNode.parentElement.innerText.substring(0, 500);
+
+  const data = await secureFetch("/dyslexia/v2/suggest", {
+    sentence: context,
+    misspelled_word: selection
+  });
+
+  if (data && data.suggestions && data.suggestions.length > 0) {
+    showSuggestionBox(data, selection);
+  }
+});
+
+// UI helper (Same as before, abbreviated)
+function showSuggestionBox(data, original) {
+  // ... existing popup UI code ...
+  // When user clicks a suggestion, send FEEDBACK
+  // Example button click:
+  // secureFetch("/dyslexia/feedback", { 
+  //   misspelling: original, 
+  //   chosen: clickedWord, 
+  //   action: "accepted" 
+  // });
+}
+
+// ... Font Toggle Functions ...
