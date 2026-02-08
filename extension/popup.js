@@ -71,3 +71,79 @@ document.getElementById("fontToggle").addEventListener("change", (e) => {
     });
   });
 });
+
+/* popup.js */
+
+const statusDiv = document.getElementById("connectionStatus");
+const urlInput = document.getElementById("backendUrl");
+const userInput = document.getElementById("username");
+const passInput = document.getElementById("password");
+
+// 1. Load Saved Credentials
+browser.storage.local.get(["backendUrl", "auth_user", "auth_pass", "fontEnabled"]).then((res) => {
+  if (res.backendUrl) urlInput.value = res.backendUrl;
+  if (res.auth_user) userInput.value = res.auth_user;
+  if (res.auth_pass) passInput.value = res.auth_pass;
+  
+  if (res.fontEnabled) document.getElementById("fontToggle").checked = true;
+});
+
+// 2. Save & Test Connection
+document.getElementById("saveBtn").addEventListener("click", () => {
+  let url = urlInput.value.trim().replace(/\/$/, ""); // Strip trailing slash
+  const user = userInput.value.trim();
+  const pass = passInput.value.trim();
+
+  browser.storage.local.set({ 
+    backendUrl: url,
+    auth_user: user,
+    auth_pass: pass
+  });
+
+  checkConnection(url, user, pass);
+});
+
+function checkConnection(url, user, pass) {
+  statusDiv.textContent = "Authenticating...";
+  statusDiv.style.color = "#666";
+
+  // We use the status endpoint, but strictly speaking status is public.
+  // Let's try to hit a private endpoint to PROVE auth works.
+  // We'll create a dummy request to reader-mode with empty data just to check auth headers.
+  
+  // Create Basic Auth Header
+  const headers = new Headers();
+  headers.set('Authorization', 'Basic ' + btoa(user + ":" + pass));
+  headers.set('Content-Type', 'application/json');
+
+  fetch(`${url}/dyslexia/v2/suggest`, {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify({ sentence: "test", misspelled_word: "test" }) 
+  })
+  .then(response => {
+    if (response.status === 401) throw new Error("Unauthorized");
+    if (response.status !== 200) throw new Error("Server Error");
+    return response.json();
+  })
+  .then(() => {
+    statusDiv.textContent = "✅ Secure Connection Established";
+    statusDiv.style.color = "green";
+  })
+  .catch(err => {
+    if(err.message === "Unauthorized") {
+      statusDiv.textContent = "❌ Invalid Password";
+    } else {
+      statusDiv.textContent = "❌ Connection Failed";
+    }
+    statusDiv.style.color = "red";
+  });
+}
+
+// Font Toggle Logic
+document.getElementById("fontToggle").addEventListener("change", (e) => {
+  browser.storage.local.set({ fontEnabled: e.target.checked });
+  browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
+    browser.tabs.sendMessage(tabs[0].id, { command: "toggleFont", enable: e.target.checked });
+  });
+});
