@@ -5,3 +5,21 @@ div:has(> a[href="https://aidancolvin.github.io/Dyslexic/"]) {
   background-color: #ffffff !important;
   color: #000000 !important;
 }
+
+/* --- FIXED: Logo Sizing & Alignment --- */
+
+/* 1. Target the specific link to the repo and center the content */
+div:has(> a[href*="Dyslexic"]) {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    overflow: hidden !important; /* Cut off anything that overflows */
+}
+
+/* 2. Force the logo image to be small and maintain aspect ratio */
+a[href*="Dyslexic"] img {
+    height: 80px !important;    /* Fixed height */
+    width: auto !important;     /* Natural width */
+    max-width: 100% !important; /* Never wider than the box */
+    object-fit: contain !important;
+}
