@@ -1,0 +1,7 @@
+
+/* --- Hotfix: Header Logo Area Colors --- */
+/* Finds the DIV that directly contains the Dyslexic logo link and turns it white */
+div:has(> a[href="https://aidancolvin.github.io/Dyslexic/"]) {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
