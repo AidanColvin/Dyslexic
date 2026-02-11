@@ -2,10 +2,10 @@ from typing import List, Dict, Any
 import logging
 
 # Import our robust modules
-import dyslexic_logic
-import context_engine
-import user_profile
-import comprehension_service
+from . import dyslexic_logic
+from . import context_engine
+from . import user_profile
+from . import comprehension_service
 
 logger = logging.getLogger(__name__)
 

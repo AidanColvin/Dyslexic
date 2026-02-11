@@ -6,9 +6,9 @@ from flask_cors import CORS
 import base64
 
 # Import your robust modules
-import suggestion_pipeline
-import readability_service
-import structure_analyzer
+from . import suggestion_pipeline
+from . import readability_service
+from . import structure_analyzer
 
 # Setup Logging
 logging.basicConfig(level=logging.INFO)

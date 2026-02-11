@@ -134,30 +134,22 @@ EOF
 ## 📂 Project Structure
 
 ```text
-Conductor/
-├── backend/                  # The Intelligence Layer
-│   ├── app.py                # Flask API Gateway & Entry Point
-│   ├── dyslexic_logic.py     # Phonetic Hashing & Visual Distance Algorithms
-│   ├── context_engine.py     # BERT Transformer Model for Contextualization
-│   ├── structure_analyzer.py # Stylometry, Complexity Scoring & HTML Parsing
-│   └── user_profile.py       # Active Learning (User Corrections & Lexicon)
-├── extension/                # The Browser Interface (Firefox WebExtension)
-│   ├── manifest.json         # Extension Configuration
-│   ├── content.js            # DOM Injection (Reader Mode/Fonts)
-│   ├── background.js         # API Communication
-│   ├── popup.html            # User Interface (Menu)
-│   ├── popup.js              # Popup Logic
-│   └── icons/                # Extension Icons
-├── config/                   # Environment Configurations
-│   ├── public_mode.env       # Open Access Settings
-│   └── private_mode.env      # Secured/API Key Settings
-├── tests/                    # Diagnostic Suite
-│   ├── test_dyslexic_logic.py
-│   ├── test_api_integration.py
-│   └── ...
-├── run.py                    # Root Launcher
-├── build.sh                  # Firefox Extension Build Script
-├── Procfile                  # Cloud Deployment Config (Render/Heroku)
-└── requirements.txt          # Python Dependencies
+Dyslexic/
+├── src/dyslexic/             # Python package (API + NLP logic)
+│   ├── app.py                # Flask API gateway & entry point
+│   ├── dyslexic_logic.py     # Phonetic hashing & visual distance algorithms
+│   ├── context_engine.py     # Transformer-based contextual ranking
+│   ├── suggestion_pipeline.py# End-to-end suggestion orchestration
+│   ├── readability_service.py# Reader-mode extraction & cleaning
+│   └── user_profile.py       # Adaptive personalization store
+├── extension/                # Firefox WebExtension front-end
+├── scripts/                  # Data + model utilities (training, downloads)
+├── config/                   # Environment configuration samples
+├── tests/                    # Test suite
+├── assets/                   # Shared static assets
+├── data/                     # Local datasets (downloaded/generated)
+├── requirements.txt          # Aggregated dependencies
+├── run.py                    # Local launcher (adds src/ to PYTHONPATH)
+└── build.sh                  # Firefox extension packaging script
 ```
 ---

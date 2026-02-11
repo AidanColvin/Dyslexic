@@ -1,0 +1,6 @@
+-r src/dyslexic/requirements.txt
+
+# Optional tooling for data preparation and training
+datasets
+huggingface_hub
+pandas

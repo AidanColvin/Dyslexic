@@ -1,5 +1,5 @@
 from unittest.mock import patch, MagicMock
-from backend.dictionary_service import fetch_word_details
+from dyslexic.dictionary_service import fetch_word_details
 
 def test_fetch_word_details_empty_input():
     """Test that empty input returns None."""
@@ -9,7 +9,7 @@ def test_fetch_word_details_whitespace_input():
     """Test that whitespace input returns None."""
     assert fetch_word_details("   ") is None
 
-@patch('backend.dictionary_service.requests.get')
+@patch('dyslexic.dictionary_service.requests.get')
 def test_fetch_word_details_happy_path(mock_get):
     """Test happy path with mocked API response."""
     mock_response = MagicMock()
@@ -33,7 +33,7 @@ def test_fetch_word_details_happy_path(mock_get):
     assert result["part_of_speech"] == "noun"
     assert result["definition"] == "A representative form or pattern."
 
-@patch('backend.dictionary_service.requests.get')
+@patch('dyslexic.dictionary_service.requests.get')
 def test_fetch_word_details_api_error(mock_get):
     """Test API error returns None."""
     mock_response = MagicMock()
@@ -42,7 +42,7 @@ def test_fetch_word_details_api_error(mock_get):
 
     assert fetch_word_details("unknownword") is None
 
-@patch('backend.dictionary_service.requests.get')
+@patch('dyslexic.dictionary_service.requests.get')
 def test_fetch_word_details_exception(mock_get):
     """Test exception handling returns None."""
     mock_get.side_effect = Exception("Connection error")

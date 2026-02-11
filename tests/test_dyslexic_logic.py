@@ -1,5 +1,5 @@
 import unittest
-from backend.dyslexic_logic import DyslexicAssistant
+from dyslexic.dyslexic_logic import DyslexicAssistant
 
 class TestDyslexicLogic(unittest.TestCase):
     def setUp(self):

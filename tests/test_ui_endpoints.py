@@ -10,19 +10,15 @@ import json
 import base64
 from unittest.mock import patch
 
-# Ensure backend is in path
-if 'backend' not in sys.path:
-    sys.path.append('backend')
-
 # Import the Flask app
-from app import app
+from dyslexic.app import app
 
 class TestUIEndpoints(unittest.TestCase):
     def setUp(self):
         self.app = app.test_client()
         self.app.testing = True
 
-    @patch('suggestion_pipeline.get_robust_suggestions')
+    @patch('dyslexic.suggestion_pipeline.get_robust_suggestions')
     def test_suggest_endpoint(self, mock_suggest):
         mock_suggest.return_value = {
             "status": "success",

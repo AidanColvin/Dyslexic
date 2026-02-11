@@ -8,14 +8,7 @@ sys.modules['torch'] = MagicMock()
 import unittest
 from unittest.mock import patch
 
-# Ensure backend is in path so internal imports work
-if 'backend' not in sys.path:
-    sys.path.append('backend')
-
-# Import modules
-import dyslexic_logic
-import suggestion_pipeline
-import context_engine
+from dyslexic import dyslexic_logic, suggestion_pipeline, context_engine
 
 class TestDyslexicRun(unittest.TestCase):
     def test_generate_candidates_phonetic(self):
@@ -45,9 +38,9 @@ class TestDyslexicRun(unittest.TestCase):
         run2 = dyslexic_logic.generate_candidates("frend", dictionary, top_n=5)
         self.assertEqual(run1, run2)
 
-    @patch('context_engine.ContextRanker')
-    @patch('suggestion_pipeline.profile_manager')
-    @patch('suggestion_pipeline.comprehension_service')
+    @patch('dyslexic.context_engine.ContextRanker')
+    @patch('dyslexic.suggestion_pipeline.profile_manager')
+    @patch('dyslexic.suggestion_pipeline.comprehension_service')
     def test_full_pipeline_mocked(self, mock_cs, mock_pm, MockRanker):
         """Test the full suggestion pipeline with mocked dependencies."""
 

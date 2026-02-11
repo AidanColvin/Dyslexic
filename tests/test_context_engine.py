@@ -7,8 +7,7 @@ from unittest.mock import MagicMock
 sys.modules['transformers'] = MagicMock()
 sys.modules['torch'] = MagicMock()
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../backend')))
-from context_engine import ContextRanker
+from dyslexic.context_engine import ContextRanker
 
 def test_windowing_logic():
     ranker = ContextRanker()

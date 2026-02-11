@@ -2,8 +2,7 @@ import pytest
 import sys
 import os
 import json
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../backend')))
-from user_profile import UserProfileManager
+from dyslexic.user_profile import UserProfileManager
 
 @pytest.fixture
 def mock_profile(tmp_path):
@@ -13,7 +12,7 @@ def mock_profile(tmp_path):
     p_file = d / "test_profile.json"
     
     # Patch the global PROFILE_FILE in the module (simple monkeypatch)
-    import user_profile
+    from dyslexic import user_profile
     original_path = user_profile.PROFILE_FILE
     user_profile.PROFILE_FILE = p_file
     

@@ -7,8 +7,7 @@ import pytest
 import os
 import json
 import base64
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../backend')))
-from app import app
+from dyslexic.app import app
 
 @pytest.fixture
 def client():
